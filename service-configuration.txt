@@ -1,0 +1,24 @@
+[
+  {
+    "Name": "service-1",
+    "BackendName": "backend-1",
+    "ContainerName": "amazon/amazon-ecs-sample",
+    "LoadBalancerName": "load-balancer-1",
+    "LoadBalancerUrl": "load-balancer-1.warden",
+    "Port": 80,
+    "Site": "/",
+    "TaskName": "simple-task-1",
+    "TaskVersion": "1"
+  },
+  {
+    "Name": "service-2",
+    "BackendName": "backend-2",
+    "ContainerName": "adejonge/helloworld",
+    "LoadBalancerName": "load-balancer-2",
+    "LoadBalancerUrl": "load-balancer-2.warden",
+    "Port": 1080,
+    "Site": "/",
+    "TaskName": "simple-task-2",
+    "TaskVersion": "1"
+  }
+]

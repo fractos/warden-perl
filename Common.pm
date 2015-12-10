@@ -359,7 +359,7 @@ sub CurrentlyRegisteredWithLoadBalancer {
 	my $result = `aws elb describe-load-balancers --load-balancer-name $elbName --region $region | grep $instanceId`;
 
 	if($result =~ /$instanceId/) {
-		Log("... we are currently registred with the load balancer\n");
+		Log("... we are currently registered with the load balancer\n");
 		return 1;
 	}
 	Log("... we are not currently registered with the load balancer\n");

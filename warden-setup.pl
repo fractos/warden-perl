@@ -33,8 +33,8 @@ if(IsAgentStarted()) {
 	Log("... ECS Agent already started\n");
 } else {
 	EnsureContainerDead("ecs-agent");
-	Log("... starting ECS agent\n");
-	StartECSAgent($clusterConfiguration->{"Name"});
+	Log("... starting ECS agent for cluster " . $clusterConfiguration->{Name} . "\n");
+	StartECSAgent($clusterConfiguration->{Name});
 }
 
 DeregisterAllHostServicesFromLoadBalancer($serviceConfiguration, $instanceId, $region);
@@ -57,12 +57,12 @@ sub StartDockerService {
 
 sub RunServiceRegistrar {
 	Log("Running service registrar in detached screen...\n");
-	system("screen -S service -d -m perl ./warden-registrar.pl");
+	system("screen -S registrar -d -m perl ./warden-registrar.pl");
 } # RunServiceRegistrar
 
 sub RunServiceManager {
 	Log("Running service manager in detached screen...\n");
-	system("screen -S service -d -m perl ./warden-manager.pl");
+	system("screen -S manager -d -m perl ./warden-manager.pl");
 } # RunServiceManager
 
 sub StartECSAgent {
@@ -110,7 +110,7 @@ sub StartRedx {
 
 	Log("Starting Redx container...\n");
 
-	my @ports = (80, 8081, 8082);
+	my @ports = (8081, 8082);
 
 	foreach my $serviceKey (keys %$serviceConfiguration) {
 		my $service = $serviceConfiguration->{$serviceKey};
@@ -122,7 +122,9 @@ sub StartRedx {
 		$portDefinitions .= "-p $port:$port ";
 	}
 
-	system("docker run -d --name redx $portDefinitions -e REDIS_HOST=\"\'$redisAddress\'\" -e PLUGINS=\\{\\'random\\'\\} cbarraford/redx");
+	my $line = "docker run -d --name redx $portDefinitions -e REDIS_HOST=\"\'$redisAddress\'\" -e PLUGINS=\\{\\'random\\'\\} cbarraford/redx";
+	Log("$line\n");
+	system($line);
 } # StartRedx
 
 sub StartRedis {

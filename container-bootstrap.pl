@@ -10,11 +10,12 @@ UpdateAndInstall(\@packages);
 my @assets = (
 	'warden-setup.pl',
 	'warden-registrar.pl',
-	'service-manager.pl',
+	'warden-manager.pl',
 	'nfs-configuration.txt',
 	'service-configuration.txt',
 	'cluster-configuration.txt',
-	'Common.pm'
+	'Common.pm',
+	'redis-cli'
 );
 
 FetchAssetsFromS3(\@assets, $bucketName);

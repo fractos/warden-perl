@@ -366,7 +366,7 @@ sub GetClusterConfiguration {
 
 	my $clusterConfiguration = {};
 
-	while($thisServiceSource =~ /.*?\"(.*?)\"\:\s+(.*?)[,\r\n]/g) {
+	while($input =~ /.*?\"(.*?)\"\:\s+(.*?)[,\r\n]/g) {
 		my $key = $1;
 		my $value = $2;
 
@@ -377,6 +377,47 @@ sub GetClusterConfiguration {
 
 	return $clusterConfiguration;
 } # GetClusterConfiguration
+
+sub CurrentlyRegisteredWithLoadBalancer {
+	my $elbName = shift;
+	my $instanceId = shift;
+	my $region = shift;
+
+	my $result = `aws elb describe-load-balancers --load-balancer-name $elbName --region $region | grep $instanceId`;
+
+	if($result =~ /$instanceId/) {
+		Log("... we are currently registred with the load balancer\n");
+		return 1;
+	}
+	Log("... we are not currently registered with the load balancer\n");
+	return 0;
+} # CurrentlyRegisteredWithLoadBalancer
+
+sub DeregisterFromLoadBalancer {
+	my $elbName = shift;
+	my $instanceId = shift;
+	my $region = shift;
+
+	Log("ensuring de-registered from load balancer\n");
+	if(CurrentlyRegisteredWithLoadBalancer($elbName, $instanceId, $region)) {
+		Log("... de-registering from load balancer...\n");
+
+		my $line = `aws elb deregister-instances-from-load-balancer --load-balancer-name $elbName --instances $instanceId --region $region`;
+	}
+} # DeregisterFromLoadBalancer
+
+sub RegisterWithLoadBalancer {
+	my $elbName = shift;
+	my $instanceId = shift;
+	my $region = shift;
+
+	Log("ensuring registered with load balancer\n");
+	if(!CurrentlyRegisteredWithLoadBalancer($elbName, $instanceId, $region)) {
+		Log("... registering with load balancer...\n");
+
+		my $line = `aws elb register-instances-with-load-balancer --load-balancer-name $elbName --instances $instanceId --region $region`;
+	}
+} # RegisterWithLoadBalancer
 
 sub GetServiceConfiguration {
 	my $configurationFile = shift;

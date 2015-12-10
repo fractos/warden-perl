@@ -2,7 +2,7 @@
 
 use Common;
 
-my $redisCli = shift || '/usr/local/bin/redis-cli';
+my $redisCli = shift || 'redis-cli';
 my $serviceManagerDb = shift || 11;
 my $clusterName = shift || 'eu-west-1-image-server-cluster';
 my $taskName = shift || 'image-server-task:11';

@@ -302,33 +302,6 @@ sub AssignSecurityGroups {
 
 } # AssignSecurityGroups
 
-sub CurrentlyRegisteredWithLoadBalancer {
-	my $elbName = shift;
-	my $instanceId = shift;
-
-	my $result = `aws elb describe-load-balancers --load-balancer-name $elbName | grep $instanceId`;
-
-	if($result =~ /$instanceId/) {
-		Log("... we are currently registred with the load balancer\n");
-		return 1;
-	}
-	Log("... we are not currently registered with the load balancer\n");
-	return 0;
-} # CurrentlyRegisteredWithLoadBalancer
-
-sub EnsureHostIsFullyDeregisteredFromLoadBalancer {
-	my $elbName = shift;
-	my $instanceId = shift;
-	my $region = shift;
-
-	Log("Ensuring $instanceId is fully de-registered from load balancer $elbName...\n");
-
-	if(CurrentlyRegisteredWithLoadBalancer($elbName, $instanceId)) {
-		Log("... de-registering...\n");
-		$line = `aws elb deregister-instances-from-load-balancer --load-balancer-name $elbName --instances $instanceId --region $region`;
-	}
-} # EnsureHostIsFullyDeregisteredFromLoadBalancer
-
 sub DeregisterAllHostServicesFromLoadBalancer {
 	my $serviceConfiguration = shift;
 	my $instanceId = shift;
@@ -454,6 +427,19 @@ sub GetServiceConfiguration {
 	return $serviceConfiguration;
 } # GetServiceConfiguration
 
+sub UrlEncode {
+	my $url = shift;
+	$url =~ s/\//\%2F/g;
+	$url =~ s/\:/\%3A/g;
+	return $url;
+} # UrlEncode
+
+sub Run {
+	my $line = shift;
+	print $line . "\n";
+	system($line);
+} # Run
+
 ####################### Container functions #######################
 sub IsContainerInState {
 	my $imageName = shift;
@@ -482,5 +468,19 @@ sub EnsureContainerDead {
 		system("docker rm $name");
 	}
 } # EnsureContainerDead
+
+sub GetContainerIP {
+	my $containerId = shift;
+
+	my $inspect = `docker inspect $containerId | grep IPAddress`;
+
+	$inspect =~ /.*?\"IPAddress\"\: \"(.*?)\"\,/g;
+
+	my $ip = $1;
+
+	Log("... found container ip: $ip\n");
+
+	return $ip;
+} # GetContainerIP
 
 1;

@@ -110,12 +110,12 @@ sub StartRedx {
 
 	Log("Starting Redx container...\n");
 
-	my @ports = (8081, 8082);
+	my @ports = (80, 8081, 8082);
 
-	foreach my $serviceKey (keys %$serviceConfiguration) {
-		my $service = $serviceConfiguration->{$serviceKey};
-		push(@ports, $service->{"Port"});
-	}
+	# foreach my $serviceKey (keys %$serviceConfiguration) {
+	# 	my $service = $serviceConfiguration->{$serviceKey};
+	# 	push(@ports, $service->{"Port"});
+	# }
 
 	my $portDefinitions = "";
 	foreach my $port (@ports) {

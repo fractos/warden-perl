@@ -32,8 +32,6 @@ if(-f "nfs-configuration.txt") {
 	}
 }
 
-UnSudoDocker();
-
 StartDocker();
 
 RunWardenSetup();

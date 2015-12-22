@@ -110,17 +110,7 @@ sub StartRedx {
 
 	Log("Starting Redx container...\n");
 
-	my @ports = (80, 8081, 8082);
-
-	# foreach my $serviceKey (keys %$serviceConfiguration) {
-	# 	my $service = $serviceConfiguration->{$serviceKey};
-	# 	push(@ports, $service->{"Port"});
-	# }
-
-	my $portDefinitions = "";
-	foreach my $port (@ports) {
-		$portDefinitions .= "-p $port:$port ";
-	}
+	my $portDefinitions = "-p 80:80 -p 443:443 -p 8081:8081 -p 8082:8082";
 
 	my $line = "docker run -d --name redx $portDefinitions -e REDIS_HOST=\"\'$redisAddress\'\" -e PLUGINS=\\{\\'random\\'\\} cbarraford/redx";
 	Log("$line\n");

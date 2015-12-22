@@ -22,7 +22,6 @@ while(1) {
 
 exit;
 
-
 sub MaintainService {
 	my $service = shift;
 	my $instanceId = shift;
